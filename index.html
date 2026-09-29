@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Room 26</title>
+<meta name="description" content="Room 26: album reviews, news, features and interviews.">
+<meta name="theme-color" content="#070707">
+<link rel="icon" href="logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Urbanist:ital,wght@0,300..700;1,300..700&family=Source+Serif+4:ital,opsz,wght@0,8..60,300..600;1,8..60,300..600&display=swap">
+<link rel="stylesheet" href="styles.css?v=2">
+<style>
+  html{background:#070707}
+  body{margin:0;min-height:100vh}
+  img{max-width:100%}
+  [hidden]{display:none!important}
+  .gate form{display:flex;flex-direction:column;gap:14px}
+  .gate .actions{margin-top:4px}
+  .err{color:var(--danger);font:500 14px/1.4 var(--ui);margin:0}
+  .ok{color:var(--ink);font:500 14px/1.4 var(--ui);margin:0}
+  .setup{max-width:640px;margin:48px auto;border:1px solid var(--rule);padding:28px;font:400 15px/1.6 var(--ui)}
+  .setup code{background:var(--paper-2);padding:2px 6px}
+  .people li{grid-template-columns:auto minmax(0,1fr) auto}
+</style>
+</head>
+<body>
+
+<div class="announce" id="announce" hidden></div>
+<div class="strip">
+  <div class="wrap">
+    <span class="label" id="today"></span>
+    <div class="strip-right">
+      <span class="label" id="strip-text">Music · Culture · News</span>
+      <a class="btn-link" id="admin-btn" href="#admin" hidden>Admin</a>
+    </div>
+  </div>
+</div>
+
+<header class="wrap mast">
+  <a href="#home" aria-label="Room 26 home"><h1><img class="logo" src="logo.png" alt="room 26" width="1008" height="285"></h1></a>
+  <p id="tagline">Records, rooms and the people who fill them.</p>
+</header>
+
+<nav class="sections" aria-label="Sections"><div class="wrap" id="nav"></div></nav>
+
+<main class="wrap" id="view" aria-live="polite"></main>
+
+<footer>
+  <div class="wrap">
+    <div>
+      <img class="logo sm" src="logo.png" alt="room 26" width="1008" height="285">
+      <p id="foot-text">An independent media company. Reviews, reporting and long reads.</p>
+    </div>
+    <nav aria-label="Footer"><span id="foot-nav" style="display:contents"></span><a href="#admin">Admin sign-in</a></nav>
+  </div>
+</footer>
+
+<input type="file" id="file-in" accept="image/png,image/jpeg,image/webp,image/gif" hidden>
+
+<script src="config.js?v=2"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script src="app.js?v=2"></script>
+</body>
+</html>

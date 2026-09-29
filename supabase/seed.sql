@@ -1,0 +1,31 @@
+-- Optional: example posts so the site doesn't open empty.
+-- Every one is labelled "Example". Delete them from Admin -> Posts once real stories are up,
+-- or run:  delete from public.posts where author = 'Example author';
+
+insert into public.posts (type, status, title, dek, author, tone, featured, review, body) values
+('features','published','The last rehearsal rooms in the city',
+ 'Example story. Rents are rising, the soundproofing is peeling, and the bands keep booking anyway.',
+ 'Example author','char',true,null,
+ E'This is an example feature so you can see how a long read sits on the page. Replace it from Admin, or delete it once your own stories are in.\n\nThe corridor smells of old carpet and new strings. Behind each door a band is working through the same four bars.\n\n## Who books the rooms\n\nMost of the regulars have been coming for years.\n\n> You don''t rent a room for the sound. You rent it so you''ll show up.\n\nThe owners say the building has maybe two more years.'),
+('reviews','published','A quiet record that fills the room',
+ 'Example review. Soft-edged songs recorded live to tape.',
+ 'Example author','sand',false,
+ '{"artist":"Example Artist","album":"Low Light","label":"Sample Records","year":"2026","score":8.4}',
+ E'This is an example album review.\n\nThe opening track takes almost a minute to arrive, and the patience pays off.'),
+('reviews','published','Big choruses, thin middle',
+ 'Example review. Three great singles and a lot of filler.',
+ 'Example author','slate',false,
+ '{"artist":"The Example Band","album":"Northbound","label":"Placeholder Music","year":"2026","score":6.1}',
+ E'This is an example album review.'),
+('interviews','published','“I write everything in the car”',
+ 'Example interview. A songwriter on voice notes and long drives.',
+ 'Example author','stone',false,null,
+ E'This is an example interview.\n\n> The car is the only place nobody can ask me for anything.'),
+('culture','published','Why every venue now has a vinyl shelf',
+ 'Example culture piece. Merch tables are turning into small record shops.',
+ 'Example author','clay',false,null,
+ E'This is an example culture piece.'),
+('news','published','Example: Local festival announces winter edition','Example news item.','Example author','stone',false,null,
+ E'This is an example news item.'),
+('news','published','Example: Independent label opens a new studio','Example news item.','Example author','slate',false,null,
+ E'This is an example news item.');

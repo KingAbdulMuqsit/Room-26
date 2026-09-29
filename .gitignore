@@ -1,0 +1,12 @@
+# Local / editor clutter
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.log
+
+# Supabase CLI local state and secrets
+supabase/.temp/
+supabase/.branches/
+.env
+.env.*

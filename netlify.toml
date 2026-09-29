@@ -1,0 +1,36 @@
+# Room 26 on Netlify: a static site, no build step.
+[build]
+  publish = "."
+  command = ""
+
+# Don't serve the setup files as web pages
+[[redirects]]
+  from = "/supabase/*"
+  to = "/"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/serve.ps1"
+  to = "/"
+  status = 404
+  force = true
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "camera=(), microphone=(), geolocation=()"
+
+# The page itself always checks for updates; versioned files (?v=) and the logo cache long
+[[headers]]
+  for = "/index.html"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+
+[[headers]]
+  for = "/logo.png"
+  [headers.values]
+    Cache-Control = "public, max-age=604800"
