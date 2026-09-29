@@ -9,7 +9,7 @@ const SECTIONS = [
   {key:"culture", name:"Culture", single:"Culture"},
 ];
 const TONES = ["stone","clay","slate","sand","fog","char"];
-const DEFAULT_SETTINGS = {strip:"Music · Culture · News", footer:"An independent media company. Reviews, reporting and long reads.", announcement:""};
+const DEFAULT_SETTINGS = {footer:"An independent media company. Reviews, reporting and long reads.", announcement:""};
 const TABS = [
   {key:"admin", name:"Posts"}, {key:"admin-edit", name:"Write"}, {key:"admin-media", name:"Images"},
   {key:"admin-team", name:"Team"}, {key:"admin-settings", name:"Site settings"},
@@ -91,11 +91,11 @@ async function checkAdmin(){
   }
   S.authChecked = true;
   $("#admin-btn").hidden = !S.isAdmin;
+  $("#strip").hidden = !S.isAdmin;   // the top bar only carries the Admin link
 }
 
 function applySettings(){
   const s = S.settings;
-  $("#strip-text").textContent = s.strip || DEFAULT_SETTINGS.strip;
   $("#foot-text").textContent = s.footer || DEFAULT_SETTINGS.footer;
   const a = $("#announce"); a.textContent = s.announcement || ""; a.hidden = !s.announcement;
 }
@@ -444,14 +444,13 @@ function viewSettings(){
   const s = S.settings;
   return `<form class="form" id="settings-form" style="max-width:720px" novalidate>
     <div class="field"><label for="s-announcement">Announcement bar</label><input id="s-announcement" value="${esc(s.announcement)}" placeholder="Leave empty to hide the bar"><span class="hint">Shows across the top of every page. Good for a new issue, an event or a tour date.</span></div>
-    <div class="field"><label for="s-strip">Top bar text</label><input id="s-strip" value="${esc(s.strip)}"></div>
     <div class="field"><label for="s-footer">Footer text</label><input id="s-footer" value="${esc(s.footer)}"></div>
     <div class="actions"><button class="btn" type="submit">Save settings</button><span class="status" id="status" role="status"></span></div>
   </form>`;
 }
 async function saveSettings(){
   const v = id => $(id).value.trim();
-  const data = {announcement:v("#s-announcement"), strip:v("#s-strip"), footer:v("#s-footer"), updated_at:new Date().toISOString()};
+  const data = {announcement:v("#s-announcement"), footer:v("#s-footer"), updated_at:new Date().toISOString()};
   setStatus("Saving…");
   const { error } = await sb.from("site_settings").update(data).eq("id",1);
   if (error) { setStatus(errText(error)); return; }
@@ -494,7 +493,7 @@ function alertStatus(msg){ const s=$("#status"); if (s) s.textContent=msg; else 
 document.addEventListener("click", async e => {
   const t = e.target.closest("button"); if (!t) return;
   const d = t.dataset;
-  if ("signout" in d) { await sb.auth.signOut(); S.isAdmin=false; S.session=null; S.all=[]; S.team=[]; S.media=[]; $("#admin-btn").hidden=true; location.hash="home"; render(); return; }
+  if ("signout" in d) { await sb.auth.signOut(); S.isAdmin=false; S.session=null; S.all=[]; S.team=[]; S.media=[]; $("#admin-btn").hidden=true; $("#strip").hidden=true; location.hash="home"; render(); return; }
   if ("forgot" in d) {
     const email = $("#email").value.trim();
     if (!email) { authMsg("Enter your email first, then click Forgot password."); return; }
