@@ -5,7 +5,7 @@ param([int]$Port = 5526)
 
 $root = $PSScriptRoot
 $types = @{ ".html"="text/html; charset=utf-8"; ".js"="text/javascript; charset=utf-8"; ".css"="text/css; charset=utf-8";
-            ".png"="image/png"; ".jpg"="image/jpeg"; ".webp"="image/webp"; ".svg"="image/svg+xml"; ".ico"="image/x-icon" }
+            ".png"="image/png"; ".jpg"="image/jpeg"; ".webp"="image/webp"; ".svg"="image/svg+xml"; ".ico"="image/x-icon"; ".webmanifest"="application/manifest+json" }
 $listener = New-Object System.Net.HttpListener
 $listener.Prefixes.Add("http://localhost:$Port/")
 $listener.Start()
