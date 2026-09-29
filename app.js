@@ -103,7 +103,7 @@ function applySettings(){
   const a = $("#announce"); a.textContent = s.announcement || ""; a.hidden = !s.announcement;
 }
 function renderNav(route){
-  const items = [{key:"home",slug:"home",name:"Latest"}, ...SECTIONS];
+  const items = [{key:"home",slug:"home",name:"Home"}, ...SECTIONS];
   $("#nav").innerHTML = items.map(s => `<a href="#${s.slug}" ${route===s.key?'aria-current="page"':''}>${s.name}</a>`).join("");
   $("#foot-nav").innerHTML = SECTIONS.map(s => `<a href="#${s.slug}">${s.name}</a>`).join("");
 }
