@@ -1,13 +1,16 @@
 /* Room 26 — public site + admin, backed by Supabase. */
 (() => {
 const CFG = window.ROOM26_CONFIG || {};
+// key = the value stored in the database; slug = what appears in the address bar
 const SECTIONS = [
-  {key:"news", name:"News", single:"News"},
-  {key:"reviews", name:"Reviews", single:"Album review"},
-  {key:"features", name:"Features", single:"Feature"},
-  {key:"interviews", name:"Interviews", single:"Interview"},
-  {key:"culture", name:"Culture", single:"Culture"},
+  {key:"news",       slug:"news",    name:"News",    single:"News"},
+  {key:"reviews",    slug:"reviews", name:"Reviews", single:"Album review"},
+  {key:"features",   slug:"music",   name:"Music",   single:"Music"},
+  {key:"interviews", slug:"film",    name:"Film",    single:"Film"},
+  {key:"culture",    slug:"sports",  name:"Sports",  single:"Sports"},
 ];
+// old links (#features, #interviews, #culture) keep working
+const bySlug = h => SECTIONS.find(s => s.slug === h || s.key === h);
 const TONES = ["stone","clay","slate","sand","fog","char"];
 const DEFAULT_SETTINGS = {footer:"An independent media company. Reviews, reporting and long reads.", announcement:""};
 const TABS = [
@@ -100,9 +103,9 @@ function applySettings(){
   const a = $("#announce"); a.textContent = s.announcement || ""; a.hidden = !s.announcement;
 }
 function renderNav(route){
-  const items = [{key:"home",name:"Latest"}, ...SECTIONS];
-  $("#nav").innerHTML = items.map(s => `<a href="#${s.key}" ${route===s.key?'aria-current="page"':''}>${s.name}</a>`).join("");
-  $("#foot-nav").innerHTML = SECTIONS.map(s => `<a href="#${s.key}">${s.name}</a>`).join("");
+  const items = [{key:"home",slug:"home",name:"Latest"}, ...SECTIONS];
+  $("#nav").innerHTML = items.map(s => `<a href="#${s.slug}" ${route===s.key?'aria-current="page"':''}>${s.name}</a>`).join("");
+  $("#foot-nav").innerHTML = SECTIONS.map(s => `<a href="#${s.slug}">${s.name}</a>`).join("");
 }
 
 /* ================= Public site ================= */
@@ -188,7 +191,7 @@ function viewPost(id){
     <header>${kicker(p)}<h1>${esc(p.title)}</h1>${p.dek?`<p class="dek">${esc(p.dek)}</p>`:""}${byline(p)}</header>
     ${hero}${facts}
     <div class="prose">${prose(p.body)}</div>
-    <div class="art-tools"><a class="more" href="#${p.type}">More ${esc(sec(p.type).name)}</a>${S.isAdmin?`<button class="btn-link" type="button" data-edit="${p.id}">Edit in Admin</button>`:""}</div>
+    <div class="art-tools"><a class="more" href="#${sec(p.type).slug}">More ${esc(sec(p.type).name)}</a>${S.isAdmin?`<button class="btn-link" type="button" data-edit="${p.id}">Edit in Admin</button>`:""}</div>
   </article>`;
 }
 
@@ -469,7 +472,7 @@ function render(){
   document.title = "Room 26";
   if (r.startsWith("p-")) { const p = S.posts.find(x=>x.id===r.slice(2)); navKey = p?.type||""; html = viewPost(r.slice(2)); }
   else if (r === "admin" || r.startsWith("admin-")) { navKey = ""; html = viewAdmin(r); }
-  else if (SECTIONS.some(s=>s.key===r)) html = viewSection(r);
+  else if (bySlug(r)) { navKey = bySlug(r).key; html = viewSection(navKey); }
   else { navKey = "home"; html = viewHome(); }
   renderNav(navKey);
   $("#view").innerHTML = html;

@@ -1,6 +1,6 @@
 # Room 26 website
 
-The public site (news, album reviews, features, interviews, culture) plus a private **Admin** area, backed by **Supabase**:
+The public site (news, album reviews, music, film, sports) plus a private **Admin** area, backed by **Supabase**:
 
 - **Supabase Auth**: admins sign in with email and password. Invite-only; public sign-up is switched off.
 - **Postgres**: posts, image library, team and site settings, protected by row-level security.

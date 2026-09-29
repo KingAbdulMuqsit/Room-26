@@ -1,7 +1,7 @@
 {
   "name": "Room 26",
   "short_name": "Room 26",
-  "description": "Album reviews, news, features and interviews.",
+  "description": "News, album reviews, music, film and sports.",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#070707",
