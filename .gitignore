@@ -10,3 +10,6 @@ supabase/.temp/
 supabase/.branches/
 .env
 .env.*
+
+# Claude app preview settings
+.claude/

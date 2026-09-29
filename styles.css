@@ -23,11 +23,12 @@ h1,h2,h3{font-family:var(--display);font-weight:500;text-wrap:balance;margin:0;l
 
 /* Top strip + masthead */
 .strip{border-bottom:1px solid var(--rule)}
-.strip .wrap{display:flex;justify-content:space-between;align-items:center;gap:16px;padding-block:10px;flex-wrap:wrap}
+.strip .wrap{display:flex;justify-content:flex-end;align-items:center;gap:16px;padding-block:10px;flex-wrap:wrap}
 .strip-right{display:flex;gap:18px;align-items:center}
 .btn-link{background:none;border:0;padding:0;cursor:pointer;font:500 11px/1.2 var(--ui);letter-spacing:.14em;text-transform:uppercase;color:var(--ink)}
 .btn-link:hover{color:var(--accent)}
-.mast{padding-block:clamp(28px,6vw,64px) clamp(18px,3vw,28px);display:grid;grid-template-columns:1fr auto;align-items:end;gap:16px 32px}
+.mast{padding-block:clamp(28px,6vw,64px) clamp(18px,3vw,28px);display:flex;justify-content:center;align-items:center}
+.mast .logo{margin-inline:auto}
 .mast h1{margin:0}
 /* Transparent cutout of the wordmark (black keyed out, glow kept) */
 .logo{display:block;width:clamp(260px,56vw,680px);max-width:100%;height:auto;aspect-ratio:1008/285}
