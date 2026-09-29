@@ -38,6 +38,9 @@ h1,h2,h3{font-family:var(--display);font-weight:500;text-wrap:balance;margin:0;l
 .chev path{fill:none;stroke:currentColor;stroke-width:2.2;stroke-linejoin:miter}
 nav.sections{border-block:1px solid var(--ink)}
 nav.sections .wrap{display:flex;gap:clamp(16px,3vw,40px);overflow-x:auto;padding-block:12px;scrollbar-width:none}
+/* centred under the logo; auto margins (not justify-content) so a narrow phone can still scroll to the first item */
+nav.sections .wrap > a:first-child{margin-left:auto}
+nav.sections .wrap > a:last-child{margin-right:auto}
 nav.sections a{font:500 13px/1 var(--ui);letter-spacing:.1em;text-transform:uppercase;white-space:nowrap;color:var(--ink-2);padding-block:4px;border-bottom:1.5px solid transparent}
 nav.sections a:hover{color:var(--ink)}
 nav.sections a[aria-current="page"]{color:var(--ink);border-color:var(--ink)}
