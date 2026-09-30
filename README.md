@@ -94,3 +94,7 @@ Supabase's built-in email sender is rate-limited and meant for testing. For real
 Every published post has its own address, `/p/<post-id>`. When that link is shared (WhatsApp, X, Facebook, iMessage, LinkedIn, Slack…), the preview card shows the post's headline, standfirst and cover image. Posts without a cover use `og-default.png` (the logo on black).
 
 This is done by the Netlify edge function `netlify/edge-functions/share-preview.ts`, which writes the preview tags into the page before it's sent. It only runs on Netlify, not with `serve.ps1`. To check a link after deploying, paste it into https://www.opengraph.xyz. WhatsApp and Facebook cache previews, so a link shared before you changed the cover may keep the old card for a while.
+
+## Second category (update, 30 Sep 2026)
+
+Posts can have a main category plus an optional second one; the post then appears on both section pages. Run `supabase/migrations/20260930000000_second_category.sql` once in the Supabase SQL Editor to enable it. Until then, posts save normally as long as the second category is left on "None".

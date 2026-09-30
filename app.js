@@ -162,7 +162,7 @@ function viewHome(){
 }
 function viewSection(key){
   const s = sec(key);
-  const list = S.posts.filter(p => p.type === key);
+  const list = S.posts.filter(p => p.type === key || p.type2 === key);
   const head = `<div class="sec-head"><h2>${s.name}</h2><span class="label">${list.length} ${list.length===1?"piece":"pieces"}</span></div>`;
   if (!list.length) return head + (S.posts.length ? `<div class="empty"><h2>nothing in ${s.name.toLowerCase()} yet.</h2></div>` : emptyState());
   if (key === "reviews") return head + `<div class="reviews">${list.map(revCard).join("")}</div>`;
@@ -243,7 +243,7 @@ function viewPosts(){
 }
 function postsTable(){
   const f = S.filter, q = f.q.toLowerCase();
-  const rows = S.all.filter(p => (f.status==="all" || p.status===f.status) && (f.section==="all"||p.type===f.section)
+  const rows = S.all.filter(p => (f.status==="all" || p.status===f.status) && (f.section==="all"||p.type===f.section||p.type2===f.section)
     && (!q || (p.title||"").toLowerCase().includes(q) || (p.author||"").toLowerCase().includes(q)));
   if (!rows.length) return `<div class="empty" style="padding-block:32px"><h2>no posts match.</h2><p>Try another filter, or write a new post.</p></div>`;
   return `<div class="tbl-wrap"><table class="tbl"><thead><tr><th>Headline</th><th>Section</th><th>Status</th><th>Updated</th><th></th></tr></thead><tbody>
@@ -251,7 +251,7 @@ function postsTable(){
     const draft = p.status==="draft";
     const conf = S.confirm==="p:"+p.id ? `<div class="confirm" style="margin-top:8px">Delete “${esc(p.title)}” for good? <button class="btn danger" type="button" data-del-yes="${p.id}">Delete</button><button class="btn ghost" type="button" data-cancel>Keep</button></div>` : "";
     return `<tr><td><div class="ttl">${esc(p.title)}</div><div style="font-size:12px;color:var(--ink-2)">${esc(p.author||"")}</div>${conf}</td>
-      <td>${esc(sec(p.type).name)}</td>
+      <td>${esc(sec(p.type).name)}${p.type2?`<div style="font-size:12px;color:var(--ink-2)">+ ${esc(sec(p.type2).name)}</div>`:""}</td>
       <td>${draft?'<span class="pill">Draft</span>':'<span class="pill live">Live</span>'} ${p.featured?'<span class="pill lead">Lead</span>':""}</td>
       <td class="num">${fmtDate(p.updated_at)}</td>
       <td><div class="ops">
@@ -266,20 +266,26 @@ function postsTable(){
 }
 
 /* ---- Editor ---- */
-function blank(){ return {type:"features",title:"",dek:"",author:"",body:"",tone:"stone",featured:false,cover_path:"",status:"draft",review:{artist:"",album:"",label:"",year:"",score:""}}; }
+function blank(){ return {type:"features",type2:"",title:"",dek:"",author:"",body:"",tone:"stone",featured:false,cover_path:"",status:"draft",review:{artist:"",album:"",label:"",year:"",score:""}}; }
 function currentPost(){
   const src = S.editingId && S.all.find(x => x.id === S.editingId);
   return src ? {...blank(), ...src, review:{...blank().review, ...(src.review||{})}} : blank();
 }
+// Second category: any section except the main one
+const type2Options = (main, current) => `<option value="">None</option>` +
+  SECTIONS.filter(s => s.key !== main).map(s => `<option value="${s.key}" ${current===s.key?"selected":""}>${s.name}</option>`).join("");
 function viewEditor(){
   const d = currentPost(), live = d.status==="published" && S.editingId;
   return `<form class="form" id="post-form" novalidate>
     <div class="toolbar" style="margin:0"><span class="label">${S.editingId?(live?"Editing a published post":"Editing a draft"):"New post"}</span>
       ${S.editingId?`<button class="btn-link" type="button" data-new>Start a new post instead</button>`:""}</div>
     <div class="row2">
-      <div class="field"><label for="f-type">Section</label><select id="f-type">${SECTIONS.map(s=>`<option value="${s.key}" ${d.type===s.key?"selected":""}>${s.single}</option>`).join("")}</select></div>
-      <div class="field"><label for="f-author">Author</label><input id="f-author" value="${esc(d.author)}" placeholder="Name of the writer"></div>
+      <div class="field"><label for="f-type">Main category</label><select id="f-type">${SECTIONS.map(s=>`<option value="${s.key}" ${d.type===s.key?"selected":""}>${s.single}</option>`).join("")}</select>
+        <span class="hint">Sets the label on the post and, for album reviews, the album details.</span></div>
+      <div class="field"><label for="f-type2">Second category (optional)</label><select id="f-type2">${type2Options(d.type, d.type2)}</select>
+        <span class="hint">The post also appears on this section’s page.</span></div>
     </div>
+    <div class="field"><label for="f-author">Author</label><input id="f-author" value="${esc(d.author)}" placeholder="Name of the writer"></div>
     <div class="field"><label for="f-title">Headline</label><input id="f-title" value="${esc(d.title)}" placeholder="Headline" required></div>
     <div class="field"><label for="f-dek">Standfirst</label><input id="f-dek" value="${esc(d.dek)}" placeholder="One or two sentences under the headline"></div>
     <div class="review-fields" id="review-fields" ${d.type==="reviews"?"":"hidden"}>
@@ -322,20 +328,24 @@ function pickerHTML(){
 }
 function readForm(){
   const v = id => $(id).value.trim();
-  const type = v("#f-type");
-  const data = {type, title:v("#f-title"), dek:v("#f-dek"), author:v("#f-author"), body:$("#f-body").value.trim(),
+  const type = v("#f-type"), type2 = v("#f-type2");
+  const data = {type, type2: type2 && type2 !== type ? type2 : null, title:v("#f-title"), dek:v("#f-dek"), author:v("#f-author"), body:$("#f-body").value.trim(),
     tone:(document.querySelector('input[name="tone"]:checked')||{}).value||"stone", featured:$("#f-featured").checked,
     cover_path: validPath(v("#f-cover")) ? v("#f-cover") : null};
   if (type === "reviews") {
     const sc = v("#f-score");
     data.review = {artist:v("#f-artist"), album:v("#f-album"), label:v("#f-label"), year:v("#f-year"), score: sc===""?null:Math.min(10,Math.max(0,Number(sc)))};
   } else data.review = null;
+  // Before the database has the type2 column, leave it out unless a second category is picked
+  const orig = S.editingId && S.all.find(x => x.id === S.editingId);
+  if (!data.type2 && !(orig && "type2" in orig)) delete data.type2;
   return data;
 }
 function setStatus(t){ const el=$("#status"); if(el) el.textContent=t; }
 function errText(error){
   if (!error) return "";
   if (error.code === "42501" || /row-level security|permission/i.test(error.message)) return "Your account doesn’t have permission to do that.";
+  if (/type2/.test(error.message || "")) return "The second category needs a quick database update first. Run the “second category” SQL from the README in Supabase, then try again.";
   return error.message || "Something went wrong. Try again.";
 }
 async function savePost(mode){
@@ -580,7 +590,10 @@ document.addEventListener("submit", async e => {
   }
 });
 document.addEventListener("change", async e => {
-  if (e.target.id==="f-type") $("#review-fields").hidden = e.target.value!=="reviews";
+  if (e.target.id==="f-type") {
+    $("#review-fields").hidden = e.target.value!=="reviews";
+    const t2 = $("#f-type2"); t2.innerHTML = type2Options(e.target.value, t2.value);   // can't pick the same category twice
+  }
   if (e.target.id==="sec-filter") { S.filter.section=e.target.value; $("#list").innerHTML=postsTable(); }
   if (e.target.id==="file-in") {
     const files = [...e.target.files]; if (!files.length) return;
