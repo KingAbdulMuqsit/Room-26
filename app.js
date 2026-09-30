@@ -104,8 +104,8 @@ function applySettings(){
 }
 function renderNav(route){
   const items = [{key:"home",slug:"home",name:"Home"}, ...SECTIONS];
-  $("#nav").innerHTML = items.map(s => `<a href="#${s.slug}" ${route===s.key?'aria-current="page"':''}>${s.name}</a>`).join("");
-  $("#foot-nav").innerHTML = SECTIONS.map(s => `<a href="#${s.slug}">${s.name}</a>`).join("");
+  $("#nav").innerHTML = items.map(s => `<a href="/#${s.slug}" ${route===s.key?'aria-current="page"':''}>${s.name}</a>`).join("");
+  $("#foot-nav").innerHTML = SECTIONS.map(s => `<a href="/#${s.slug}">${s.name}</a>`).join("");
 }
 
 /* ================= Public site ================= */
@@ -124,17 +124,17 @@ document.body.insertAdjacentHTML("afterbegin", `<svg width="0" height="0" style=
 const gridStyle = (n, max) => `style="--cols:${Math.max(1, Math.min(n, max))}"`;
 const byline = p => `<div class="byline"><b>${esc(p.author||"Room 26")}</b><span>${fmtDate(when(p))}</span><span>${readTime(p.body)} min read</span></div>`;
 const kicker = p => `<span class="label">${esc(sec(p.type).single)}</span>`;
-const card = p => `<a class="card card-link" href="#p-${p.id}">${cover(p)}${kicker(p)}<h3>${esc(p.title)}</h3>${p.dek?`<p>${esc(p.dek)}</p>`:""}</a>`;
+const card = p => `<a class="card card-link" href="/p/${p.id}">${cover(p)}${kicker(p)}<h3>${esc(p.title)}</h3>${p.dek?`<p>${esc(p.dek)}</p>`:""}</a>`;
 function revCard(p){
   const r = p.review||{};
-  return `<a class="rev card-link" href="#p-${p.id}">${cover(p,{square:true,score:true})}
+  return `<a class="rev card-link" href="/p/${p.id}">${cover(p,{square:true,score:true})}
     <span class="artist">${esc(r.artist||"")}</span><span class="album">${esc(r.album||p.title)}</span>
     <span class="label">${esc(r.label||"")}${r.year?" · "+esc(r.year):""}</span></a>`;
 }
 function emptyState(){
   if (!S.loaded) return `<div class="empty"><span class="label">Loading</span><h2>pulling the latest.</h2></div>`;
   if (S.loadError) return `<div class="empty"><span class="label">Unavailable</span><h2>stories can’t load right now.</h2><p>Refresh the page in a moment.</p></div>`;
-  return `<div class="empty"><span class="label">Nothing here yet</span><h2>no stories yet.</h2><p>${S.isAdmin?'Open <a href="#admin-edit" style="border-bottom:1px solid">Admin</a> to publish the first piece.':'Check back soon.'}</p></div>`;
+  return `<div class="empty"><span class="label">Nothing here yet</span><h2>no stories yet.</h2><p>${S.isAdmin?'Open <a href="/#admin-edit" style="border-bottom:1px solid">Admin</a> to publish the first piece.':'Check back soon.'}</p></div>`;
 }
 function viewHome(){
   const all = S.posts;
@@ -146,18 +146,18 @@ function viewHome(){
   const news = all.filter(p => p.type === "news" && p !== lead).slice(0,6);
   const side = rest.filter(p => !latest.includes(p) && p.type !== "news" && p.type !== "reviews").slice(0,3);
   return `
-  <a class="lead card-link" href="#p-${lead.id}">
+  <a class="lead card-link" href="/p/${lead.id}">
     <div>${kicker(lead)}<h2>${esc(lead.title)}</h2>${lead.dek?`<p class="dek">${esc(lead.dek)}</p>`:""}${byline(lead)}</div>
     ${cover(lead,{score:lead.type==="reviews"})}
   </a>
   ${latest.length?`<section class="block"><div class="block-head"><h2>This week</h2></div>
     <div class="grid3${latest.length===1?" single":""}" ${gridStyle(latest.length,3)}>${latest.map(card).join("")}</div></section>`:""}
-  ${reviews.length?`<section class="block"><div class="block-head"><h2>Reviews</h2><a class="more" href="#reviews">All reviews</a></div>
+  ${reviews.length?`<section class="block"><div class="block-head"><h2>Reviews</h2><a class="more" href="/#reviews">All reviews</a></div>
     <div class="reviews${reviews.length<=2?" wide":""}" ${gridStyle(reviews.length,4)}>${reviews.map(revCard).join("")}</div></section>`:""}
   ${(news.length||side.length)?`<section class="block split${news.length&&side.length?"":" solo"}">
-    <div>${news.length?`<div class="block-head"><h2>The wire</h2><a class="more" href="#news">All news</a></div>
-      <ul class="wire">${news.map(p=>`<li><a href="#p-${p.id}"><time>${fmtShort(when(p))}</time><h3>${esc(p.title)}</h3></a></li>`).join("")}</ul>`:""}</div>
-    <div>${side.length?`<div class="block-head"><h2>Also read</h2></div><div class="aside-list">${side.map(p=>`<a class="card card-link" href="#p-${p.id}">${kicker(p)}<h3>${esc(p.title)}</h3>${byline(p)}</a>`).join("")}</div>`:""}</div>
+    <div>${news.length?`<div class="block-head"><h2>The wire</h2><a class="more" href="/#news">All news</a></div>
+      <ul class="wire">${news.map(p=>`<li><a href="/p/${p.id}"><time>${fmtShort(when(p))}</time><h3>${esc(p.title)}</h3></a></li>`).join("")}</ul>`:""}</div>
+    <div>${side.length?`<div class="block-head"><h2>Also read</h2></div><div class="aside-list">${side.map(p=>`<a class="card card-link" href="/p/${p.id}">${kicker(p)}<h3>${esc(p.title)}</h3>${byline(p)}</a>`).join("")}</div>`:""}</div>
   </section>`:""}`;
 }
 function viewSection(key){
@@ -166,7 +166,7 @@ function viewSection(key){
   const head = `<div class="sec-head"><h2>${s.name}</h2><span class="label">${list.length} ${list.length===1?"piece":"pieces"}</span></div>`;
   if (!list.length) return head + (S.posts.length ? `<div class="empty"><h2>nothing in ${s.name.toLowerCase()} yet.</h2></div>` : emptyState());
   if (key === "reviews") return head + `<div class="reviews">${list.map(revCard).join("")}</div>`;
-  return head + `<div class="row-list">${list.map(p=>`<a class="row card-link" href="#p-${p.id}">${cover(p)}<div>${kicker(p)}<h3>${esc(p.title)}</h3>${p.dek?`<p>${esc(p.dek)}</p>`:""}${byline(p)}</div></a>`).join("")}</div>`;
+  return head + `<div class="row-list">${list.map(p=>`<a class="row card-link" href="/p/${p.id}">${cover(p)}<div>${kicker(p)}<h3>${esc(p.title)}</h3>${p.dek?`<p>${esc(p.dek)}</p>`:""}${byline(p)}</div></a>`).join("")}</div>`;
 }
 function prose(body){
   return String(body||"").trim().split(/\n\s*\n/).map(b => {
@@ -180,7 +180,7 @@ function prose(body){
 }
 function viewPost(id){
   const p = S.posts.find(x => x.id === id) || (S.isAdmin && S.all.find(x => x.id === id));
-  if (!p) return S.loaded ? `<div class="empty"><span class="label">Not found</span><h2>this story isn’t available.</h2><p><a href="#home" style="border-bottom:1px solid">Back to the front page</a></p></div>` : emptyState();
+  if (!p) return S.loaded ? `<div class="empty"><span class="label">Not found</span><h2>this story isn’t available.</h2><p><a href="/#home" style="border-bottom:1px solid">Back to the front page</a></p></div>` : emptyState();
   const r = p.review||{};
   const facts = p.type === "reviews" ? `<div class="facts"><div class="big">${r.score!=null?Number(r.score).toFixed(1):"–"}<span class="label" style="display:block;margin-top:8px">out of 10</span></div>
     <dl><dt>Artist</dt><dd>${esc(r.artist)}</dd><dt>Album</dt><dd><i>${esc(r.album)}</i></dd>${r.label?`<dt>Label</dt><dd>${esc(r.label)}</dd>`:""}${r.year?`<dt>Released</dt><dd>${esc(r.year)}</dd>`:""}</dl></div>` : "";
@@ -191,7 +191,7 @@ function viewPost(id){
     <header>${kicker(p)}<h1>${esc(p.title)}</h1>${p.dek?`<p class="dek">${esc(p.dek)}</p>`:""}${byline(p)}</header>
     ${hero}${facts}
     <div class="prose">${prose(p.body)}</div>
-    <div class="art-tools"><a class="more" href="#${sec(p.type).slug}">More ${esc(sec(p.type).name)}</a>${S.isAdmin?`<button class="btn-link" type="button" data-edit="${p.id}">Edit in Admin</button>`:""}</div>
+    <div class="art-tools"><a class="more" href="/#${sec(p.type).slug}">More ${esc(sec(p.type).name)}</a>${p.status==="published"?`<button class="btn-link" type="button" data-share="${p.id}">Share</button>`:""}${S.isAdmin?`<button class="btn-link" type="button" data-edit="${p.id}">Edit in Admin</button>`:""}</div>
   </article>`;
 }
 
@@ -226,7 +226,7 @@ function authMsg(t, ok=false){ const m=$("#auth-msg"); if(m){ m.textContent=t; m
 function viewAdmin(r){
   if (!S.isAdmin || S.needsPassword) return viewSignIn();
   const head = `<div class="admin-top"><h2>admin</h2><div class="who"><span>Signed in as ${esc(S.session.user.email)}</span><button class="btn-link" type="button" data-signout>Sign out</button></div></div>
-    <nav class="tabs" aria-label="Admin">${TABS.map(t=>`<a href="#${t.key}" ${r===t.key?'aria-current="page"':''}>${t.name}</a>`).join("")}</nav>`;
+    <nav class="tabs" aria-label="Admin">${TABS.map(t=>`<a href="/#${t.key}" ${r===t.key?'aria-current="page"':''}>${t.name}</a>`).join("")}</nav>`;
   const body = r==="admin-edit" ? viewEditor() : r==="admin-media" ? viewMedia() : r==="admin-team" ? viewTeam() : r==="admin-settings" ? viewSettings() : viewPosts();
   return head + `<div id="admin-body">${body}</div>`;
 }
@@ -256,7 +256,7 @@ function postsTable(){
       <td class="num">${fmtDate(p.updated_at)}</td>
       <td><div class="ops">
         <button class="btn-link" type="button" data-edit="${p.id}">Edit</button>
-        <a class="btn-link" href="#p-${p.id}">${draft?"Preview":"View"}</a>
+        <a class="btn-link" href="/p/${p.id}">${draft?"Preview":"View"}</a>
         ${draft?`<button class="btn-link" type="button" data-publish="${p.id}">Publish</button>`:
           `<button class="btn-link" type="button" data-lead="${p.id}">${p.featured?"Remove lead":"Make lead"}</button>
            <button class="btn-link" type="button" data-unpub="${p.id}">Unpublish</button>`}
@@ -351,7 +351,7 @@ async function savePost(mode){
   document.querySelectorAll("#post-form button").forEach(b=>b.disabled=false);
   if (error) { setStatus(errText(error)); return; }
   await reload();
-  if (mode === "published") { S.editingId = null; location.hash = "p-" + row.id; }
+  if (mode === "published") { S.editingId = null; go(postUrl(row.id)); }
   else { S.editingId = row.id; render(); setStatus("Saved as a draft."); }
 }
 
@@ -461,11 +461,31 @@ async function saveSettings(){
 }
 
 /* ================= Routing & events ================= */
+/* Posts live at real addresses (/p/<id>) so shared links get their own preview card;
+   sections and admin stay on the homepage's #hash. */
+const POST_PATH = /^\/p\/([0-9a-f-]{36})\/?$/i;
 function route(){
+  const m = location.pathname.match(POST_PATH);
+  if (m) return "p-" + m[1];
   const h = location.hash.slice(1);
   if (!h || h.includes("=")) return (AUTH_LINK || S.linkError) ? "admin" : "home";   // auth tokens in the hash
   return h;
 }
+const postUrl = id => "/p/" + id;
+function upgradeOldPostLink(){ const old = location.hash.match(/^#p-([0-9a-f-]{36})$/i); if (old) history.replaceState(null, "", postUrl(old[1])); }
+function onNav(){ upgradeOldPostLink(); const r=route(); if (r!==lastRoute){ lastRoute=r; S.confirm=null; S.picker=null; render(); window.scrollTo(0,0);} }
+function go(url){ history.pushState(null, "", url); onNav(); }
+// In-site links switch views without reloading the page
+document.addEventListener("click", e => {
+  const a = e.target.closest("a[href^='/']");
+  if (!a || a.target || e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+  const href = a.getAttribute("href");
+  if (!/^\/(#|p\/|$)/.test(href)) return;   // only pages this app draws
+  e.preventDefault(); go(href);
+});
+window.addEventListener("popstate", onNav);
+// Old-style post links (/#p-<id>) move to the new address
+upgradeOldPostLink();
 function render(){
   const r = route();
   let html, navKey = r;
@@ -487,7 +507,7 @@ function refreshList(){
   render();
 }
 let lastRoute = null;
-window.addEventListener("hashchange", () => { const r=route(); if (r!==lastRoute){ lastRoute=r; S.confirm=null; S.picker=null; render(); window.scrollTo(0,0);} });
+window.addEventListener("hashchange", onNav);
 
 let uploadTarget = null;
 async function mutate(promise){ const { error } = await promise; if (error) { alertStatus(errText(error)); return false; } await reload(); return true; }
@@ -496,15 +516,21 @@ function alertStatus(msg){ const s=$("#status"); if (s) s.textContent=msg; else 
 document.addEventListener("click", async e => {
   const t = e.target.closest("button"); if (!t) return;
   const d = t.dataset;
-  if ("signout" in d) { await sb.auth.signOut(); S.isAdmin=false; S.session=null; S.all=[]; S.team=[]; S.media=[]; $("#admin-btn").hidden=true; $("#strip").hidden=true; location.hash="home"; render(); return; }
+  if (d.share) {
+    const p = S.posts.find(x => x.id === d.share); const url = location.origin + postUrl(d.share);
+    if (navigator.share) { try { await navigator.share({ title: p?.title || "Room 26", url }); } catch {} return; }
+    try { await navigator.clipboard.writeText(url); t.textContent = "Link copied"; } catch { t.textContent = url; }
+    setTimeout(() => { t.textContent = "Share"; }, 2500); return;
+  }
+  if ("signout" in d) { await sb.auth.signOut(); S.isAdmin=false; S.session=null; S.all=[]; S.team=[]; S.media=[]; $("#admin-btn").hidden=true; $("#strip").hidden=true; go("/#home"); render(); return; }
   if ("forgot" in d) {
     const email = $("#email").value.trim();
     if (!email) { authMsg("Enter your email first, then click Forgot password."); return; }
-    const { error } = await sb.auth.resetPasswordForEmail(email, { redirectTo: location.origin + location.pathname + "#admin" });
+    const { error } = await sb.auth.resetPasswordForEmail(email, { redirectTo: location.origin + "/#admin" });
     authMsg(error ? error.message : "If that address has an account, a reset link is on its way.", !error); return;
   }
-  if ("new" in d) { S.editingId=null; if (route()!=="admin-edit") location.hash="admin-edit"; else render(); return; }
-  if (d.edit) { S.editingId=d.edit; S.confirm=null; if (route()!=="admin-edit") location.hash="admin-edit"; else render(); window.scrollTo(0,0); return; }
+  if ("new" in d) { S.editingId=null; if (route()!=="admin-edit") go("/#admin-edit"); else render(); return; }
+  if (d.edit) { S.editingId=d.edit; S.confirm=null; if (route()!=="admin-edit") go("/#admin-edit"); else render(); window.scrollTo(0,0); return; }
   if (d.status) { S.filter.status=d.status; document.querySelectorAll("[data-status]").forEach(b=>b.setAttribute("aria-pressed", b.dataset.status===d.status)); $("#list").innerHTML=postsTable(); return; }
   if (d.del) { S.confirm="p:"+d.del; refreshList(); return; }
   if ("cancel" in d) { S.confirm=null; route()==="admin-team" ? render() : refreshList(); return; }
@@ -550,7 +576,7 @@ document.addEventListener("submit", async e => {
     const { error } = await sb.auth.updateUser({ password: a });
     if (error) { authMsg(error.message); return; }
     S.needsPassword = false; await checkAdmin(); await loadAdmin();
-    history.replaceState(null, "", location.pathname + "#admin"); lastRoute = "admin"; render();
+    history.replaceState(null, "", "/#admin"); lastRoute = "admin"; render();
   }
 });
 document.addEventListener("change", async e => {
@@ -580,7 +606,7 @@ lastRoute = route(); render();
 (async () => {
   await checkAdmin();
   await Promise.all([loadPublic(), loadAdmin()]);
-  if (AUTH_LINK || S.linkError) { history.replaceState(null, "", location.pathname + "#admin"); lastRoute = "admin"; }
+  if (AUTH_LINK || S.linkError) { history.replaceState(null, "", "/#admin"); lastRoute = "admin"; }
   render();
 })();
 })();

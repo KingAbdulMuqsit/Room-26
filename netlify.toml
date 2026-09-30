@@ -2,8 +2,22 @@
 [build]
   publish = "."
   command = ""
+  edge_functions = "netlify/edge-functions"
+
+# Each post has its own address (/p/<id>). It's the same page; the share-preview
+# edge function adds that post's link-preview tags before it's sent.
+[[redirects]]
+  from = "/p/*"
+  to = "/index.html"
+  status = 200
 
 # Don't serve the setup files as web pages
+[[redirects]]
+  from = "/netlify/*"
+  to = "/"
+  status = 404
+  force = true
+
 [[redirects]]
   from = "/supabase/*"
   to = "/"

@@ -14,7 +14,7 @@ try {
   while ($listener.IsListening) {
     $ctx = $listener.GetContext()
     $rel = [Uri]::UnescapeDataString($ctx.Request.Url.AbsolutePath.TrimStart('/'))
-    if ([string]::IsNullOrEmpty($rel)) { $rel = "index.html" }
+    if ([string]::IsNullOrEmpty($rel) -or $rel -match '^p/') { $rel = "index.html" }   # post pages are the same page
     $path = [IO.Path]::GetFullPath((Join-Path $root $rel))
     try {
       if ($path.StartsWith($root) -and (Test-Path $path -PathType Leaf)) {

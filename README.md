@@ -88,3 +88,9 @@ Supabase's built-in email sender is rate-limited and meant for testing. For real
 - Visitors can only read **published** posts and settings. Drafts, the image library list, and the team list are admin-only, enforced in the database, not just hidden in the page.
 - Uploads are limited to PNG, JPEG, WebP and GIF, up to 20 MB, and only admins can upload.
 - The invite function checks that the caller is an admin before doing anything.
+
+## Link previews
+
+Every published post has its own address, `/p/<post-id>`. When that link is shared (WhatsApp, X, Facebook, iMessage, LinkedIn, Slack…), the preview card shows the post's headline, standfirst and cover image. Posts without a cover use `og-default.png` (the logo on black).
+
+This is done by the Netlify edge function `netlify/edge-functions/share-preview.ts`, which writes the preview tags into the page before it's sent. It only runs on Netlify, not with `serve.ps1`. To check a link after deploying, paste it into https://www.opengraph.xyz. WhatsApp and Facebook cache previews, so a link shared before you changed the cover may keep the old card for a while.
