@@ -13,7 +13,7 @@ const SUPABASE_ANON_KEY = Netlify.env.get("SUPABASE_ANON_KEY") ??
 
 const SITE_NAME = "Room 26";
 const SITE_DESC = "News, album reviews, music, film and sports from Room 26.";
-const SECTION: Record<string, string> = { news: "News", reviews: "Album review", features: "Music", interviews: "Film", culture: "Sports" };
+const SECTION: Record<string, string> = { news: "News", reviews: "Album review", features: "Music", interviews: "Film", culture: "Sports", sitdown: "The Sitdown" };
 const POST_PATH = /^\/p\/([0-9a-f-]{36})\/?$/i;
 
 type Post = {

@@ -8,6 +8,7 @@ const SECTIONS = [
   {key:"features",   slug:"music",   name:"Music",   single:"Music"},
   {key:"interviews", slug:"film",    name:"Film",    single:"Film"},
   {key:"culture",    slug:"sports",  name:"Sports",  single:"Sports"},
+  {key:"sitdown",    slug:"the-sitdown", name:"The Sitdown", single:"The Sitdown"},
 ];
 // old links (#features, #interviews, #culture) keep working
 const bySlug = h => SECTIONS.find(s => s.slug === h || s.key === h);
@@ -353,6 +354,7 @@ function setStatus(t){ const el=$("#status"); if(el) el.textContent=t; }
 function errText(error){
   if (!error) return "";
   if (error.code === "42501" || /row-level security|permission/i.test(error.message)) return "Your account doesn’t have permission to do that.";
+  if (/posts_type_check|posts_type2_check/.test(error.message || "")) return "This category needs a quick database update first. Run the “The Sitdown” SQL from the README in Supabase, then try again.";
   if (/type2/.test(error.message || "")) return "The second category needs a quick database update first. Run the “second category” SQL from the README in Supabase, then try again.";
   return error.message || "Something went wrong. Try again.";
 }

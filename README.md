@@ -98,3 +98,7 @@ This is done by the Netlify edge function `netlify/edge-functions/share-preview.
 ## Second category (update, 30 Sep 2026)
 
 Posts can have a main category plus an optional second one; the post then appears on both section pages. Run `supabase/migrations/20260930000000_second_category.sql` once in the Supabase SQL Editor to enable it. Until then, posts save normally as long as the second category is left on "None".
+
+## The Sitdown category (update, 12 Oct 2026)
+
+Adds **The Sitdown** as a category (main or second) with its own tab at `/#the-sitdown`. Run `supabase/migrations/20261012000000_the_sitdown.sql` once in the Supabase SQL Editor; until then, saving a post in The Sitdown shows a message asking for the update.
