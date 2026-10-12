@@ -30,7 +30,7 @@ function summary(p: Post): string {
   if (p.dek?.trim()) return clip(p.dek.trim(), 200);
   const para = (p.body || "").split(/\n\s*\n/).map((b) => b.trim())
     .find((b) => b && !b.startsWith("## ") && !b.startsWith("[image ")) ?? "";
-  const text = para.replace(/^>\s?/gm, "").replace(/\s+/g, " ").trim();
+  const text = para.replace(/^>\s?/gm, "").replace(/\*\*|\*/g, "").replace(/\s+/g, " ").trim();
   if (text) return clip(text, 200);
   if (p.type === "reviews" && p.review?.album) return `${SECTION.reviews}: ${p.review.artist ?? ""} – ${p.review.album}`;
   return SITE_DESC;

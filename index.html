@@ -6,6 +6,12 @@
 <title>Room 26</title>
 <meta name="description" content="Room 26: news, album reviews, music, film and sports.">
 <meta name="theme-color" content="#070707">
+<script>
+  // Apply the reader's light/dark choice before the page draws (no flash). Dark is the default.
+  (function () { var t = null; try { t = localStorage.getItem("r26-theme"); } catch (e) {}
+    if (t === "light") { document.documentElement.setAttribute("data-theme", "light");
+      document.querySelector('meta[name="theme-color"]').setAttribute("content", "#F3F3F1"); } })();
+</script>
 <link rel="icon" href="/favicon.ico" sizes="16x16 32x32 48x48">
 <link rel="icon" type="image/png" href="/favicon-32.png" sizes="32x32">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
@@ -13,9 +19,9 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Urbanist:ital,wght@0,300..700;1,300..700&family=Source+Serif+4:ital,opsz,wght@0,8..60,300..600;1,8..60,300..600&display=swap">
-<link rel="stylesheet" href="/styles.css?v=11">
+<link rel="stylesheet" href="/styles.css?v=12">
 <style>
-  html{background:#070707}
+  html{background:var(--paper)}
   body{margin:0;min-height:100vh}
   img{max-width:100%}
   [hidden]{display:none!important}
@@ -40,26 +46,44 @@
 </div>
 
 <header class="wrap mast">
-  <a href="/#home" aria-label="Room 26 home"><h1><img class="logo" src="/logo.png" alt="room 26" width="1008" height="285"></h1></a></header>
+  <a href="/#home" aria-label="Room 26 home"><h1><img class="logo" src="/logo.png" alt="room 26" width="1008" height="285"></h1></a>
+  <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Switch to light mode" title="Switch to light mode">
+    <svg class="sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M5.3 18.7l1.6-1.6M17.1 6.9l1.6-1.6"/></svg>
+    <svg class="moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 14.2A8.5 8.5 0 1 1 9.8 3.5a6.8 6.8 0 0 0 10.7 10.7z"/></svg>
+  </button>
+</header>
 
 <nav class="sections" aria-label="Sections"><div class="wrap" id="nav"></div></nav>
 
 <main class="wrap" id="view" aria-live="polite"></main>
 
 <footer>
-  <div class="wrap">
-    <div>
+  <div class="wrap foot">
+    <div class="foot-brand">
       <img class="logo sm" src="/logo.png" alt="room 26" width="1008" height="285">
-      <p id="foot-text">An independent media company. Reviews, reporting and long reads.</p>
+      <p class="foot-lede">An independent voice in music and culture.</p>
+      <p class="foot-bio">Room 26 is a platform for thoughtful criticism, emerging talent, and conversations that shape how we experience and understand art. Through editorial reviews, artist spotlights, cultural commentary, and open conversations, we explore the work, ideas, and people shaping the sound and direction of contemporary culture.</p>
     </div>
-    <nav aria-label="Footer"><span id="foot-nav" style="display:contents"></span><a href="/#admin">Admin sign-in</a></nav>
+    <div class="foot-side">
+      <div class="foot-contact">
+        <span class="label">Contact &amp; follow</span>
+        <div class="socials">
+          <a class="social" href="https://www.instagram.com/roomtwentysix_" target="_blank" rel="noopener noreferrer" aria-label="Room 26 on Instagram">
+            <svg class="ig" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4.2"/><circle cx="17.4" cy="6.6" r=".6" fill="currentColor" stroke="none"/></svg>Instagram</a>
+          <a class="social" href="https://x.com/RoomTwentysix" target="_blank" rel="noopener noreferrer" aria-label="Room 26 on X">
+            <svg class="x" viewBox="0 0 24 24" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>X (Twitter)</a>
+        </div>
+      </div>
+      <nav aria-label="Footer"><span id="foot-nav" style="display:contents"></span><a href="/#admin">Admin sign-in</a></nav>
+    </div>
   </div>
+  <div class="wrap foot-base"><span>&copy; <span id="year">2026</span> Room 26</span><span>@roomtwentysix_</span></div>
 </footer>
 
 <input type="file" id="file-in" accept="image/png,image/jpeg,image/webp,image/gif" hidden>
 
-<script src="/config.js?v=11"></script>
+<script src="/config.js?v=12"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
-<script src="/app.js?v=11"></script>
+<script src="/app.js?v=12"></script>
 </body>
 </html>

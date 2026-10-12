@@ -12,7 +12,7 @@ const SECTIONS = [
 // old links (#features, #interviews, #culture) keep working
 const bySlug = h => SECTIONS.find(s => s.slug === h || s.key === h);
 const TONES = ["stone","clay","slate","sand","fog","char"];
-const DEFAULT_SETTINGS = {footer:"An independent media company. Reviews, reporting and long reads.", announcement:""};
+const DEFAULT_SETTINGS = {announcement:""};
 const TABS = [
   {key:"admin", name:"Posts"}, {key:"admin-edit", name:"Write"}, {key:"admin-media", name:"Images"},
   {key:"admin-team", name:"Team"}, {key:"admin-settings", name:"Site settings"},
@@ -99,7 +99,6 @@ async function checkAdmin(){
 
 function applySettings(){
   const s = S.settings;
-  $("#foot-text").textContent = s.footer || DEFAULT_SETTINGS.footer;
   const a = $("#announce"); a.textContent = s.announcement || ""; a.hidden = !s.announcement;
 }
 function renderNav(route){
@@ -119,7 +118,7 @@ function cover(p, {square=false, score=false}={}){
     ${img || mark}${sc}<span class="cap">${esc(sec(p.type).name)}</span></div>`;
 }
 document.body.insertAdjacentHTML("afterbegin", `<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
-  <linearGradient id="r26-chrome" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff"/><stop offset=".45" stop-color="#8a8a8a"/><stop offset=".6" stop-color="#f0f0f0"/><stop offset="1" stop-color="#9a9a9a"/></linearGradient></defs></svg>`);
+  <linearGradient id="r26-chrome" x1="0" y1="0" x2="0" y2="1"><stop offset="0" style="stop-color:var(--mark-1)"/><stop offset=".45" style="stop-color:var(--mark-2)"/><stop offset=".6" style="stop-color:var(--mark-3)"/><stop offset="1" style="stop-color:var(--mark-4)"/></linearGradient></defs></svg>`);
 // Rows size themselves to how many items there are, so a short row never leaves a gap
 const gridStyle = (n, max) => `style="--cols:${Math.max(1, Math.min(n, max))}"`;
 const byline = p => `<div class="byline"><b>${esc(p.author||"Room 26")}</b><span>${fmtDate(when(p))}</span><span>${readTime(p.body)} min read</span></div>`;
@@ -155,7 +154,7 @@ function viewHome(){
   ${reviews.length?`<section class="block"><div class="block-head"><h2>Reviews</h2><a class="more" href="/#reviews">All reviews</a></div>
     <div class="reviews${reviews.length<=2?" wide":""}" ${gridStyle(reviews.length,4)}>${reviews.map(revCard).join("")}</div></section>`:""}
   ${(news.length||side.length)?`<section class="block split${news.length&&side.length?"":" solo"}">
-    <div>${news.length?`<div class="block-head"><h2>The wire</h2><a class="more" href="/#news">All news</a></div>
+    <div>${news.length?`<div class="block-head"><h2><a href="/#news">All news</a></h2></div>
       <ul class="wire">${news.map(p=>`<li><a href="/p/${p.id}"><time>${fmtShort(when(p))}</time><h3>${esc(p.title)}</h3></a></li>`).join("")}</ul>`:""}</div>
     <div>${side.length?`<div class="block-head"><h2>Also read</h2></div><div class="aside-list">${side.map(p=>`<a class="card card-link" href="/p/${p.id}">${kicker(p)}<h3>${esc(p.title)}</h3>${byline(p)}</a>`).join("")}</div>`:""}</div>
   </section>`:""}`;
@@ -168,14 +167,18 @@ function viewSection(key){
   if (key === "reviews") return head + `<div class="reviews">${list.map(revCard).join("")}</div>`;
   return head + `<div class="row-list">${list.map(p=>`<a class="row card-link" href="/p/${p.id}">${cover(p)}<div>${kicker(p)}<h3>${esc(p.title)}</h3>${p.dek?`<p>${esc(p.dek)}</p>`:""}${byline(p)}</div></a>`).join("")}</div>`;
 }
+// **bold** and *italic*, applied after escaping so nothing else can slip through
+const inline = s => esc(s)
+  .replace(/\*\*(?=\S)([\s\S]*?\S)\*\*/g, "<strong>$1</strong>")
+  .replace(/\*(?=\S)([^*\n]*?\S)\*/g, "<em>$1</em>");
 function prose(body){
   return String(body||"").trim().split(/\n\s*\n/).map(b => {
     b = b.trim();
     const im = b.match(/^\[image ([A-Za-z0-9/_.-]{3,200})(?:\s+([^\]]*))?\]$/);
     if (im && validPath(im[1])) return `<figure><img src="${esc(imgUrl(im[1]))}" alt="${esc(im[2]||"")}" loading="lazy">${im[2]?`<figcaption>${esc(im[2])}</figcaption>`:""}</figure>`;
     if (b.startsWith("## ")) return `<h2>${esc(b.slice(3))}</h2>`;
-    if (b.startsWith("> ")) return `<blockquote>${esc(b.replace(/^>\s?/gm,""))}</blockquote>`;
-    return `<p>${esc(b).replace(/\n/g,"<br>")}</p>`;
+    if (b.startsWith("> ")) return `<blockquote>${inline(b.replace(/^>\s?/gm,""))}</blockquote>`;
+    return `<p>${inline(b).replace(/\n/g,"<br>")}</p>`;
   }).join("").replace(/<\/p>$/, `<span class="end" aria-hidden="true"></span></p>`);
 }
 function viewPost(id){
@@ -308,9 +311,14 @@ function viewEditor(){
     </div>
     <div id="picker-slot"></div>
     <div class="field"><label for="f-body">Body</label>
-      <div class="actions" style="margin-bottom:4px"><button class="btn-link" type="button" data-upload="body">+ Upload image into text</button><button class="btn-link" type="button" data-pick="body">+ Image from library</button></div>
+      <div class="fmt-bar" role="toolbar" aria-label="Formatting">
+        <button class="b" type="button" data-fmt="**" title="Bold (Ctrl+B)" aria-label="Bold">B</button>
+        <button class="i" type="button" data-fmt="*" title="Italic (Ctrl+I)" aria-label="Italic">I</button>
+        <span class="sep" aria-hidden="true"></span>
+        <button class="btn-link" type="button" data-upload="body">+ Upload image into text</button><button class="btn-link" type="button" data-pick="body">+ Image from library</button>
+      </div>
       <textarea id="f-body" placeholder="Write the piece here.">${esc(d.body)}</textarea>
-      <span class="hint">Blank line between paragraphs. ## starts a subheading, &gt; a pull quote. Images appear as [image …] lines; type a caption after the file name.</span></div>
+      <span class="hint">Select words and press B or I (or Ctrl+B / Ctrl+I). Bold shows as **like this**, italic as *like this*. Blank line between paragraphs; ## starts a subheading, &gt; a pull quote. Images appear as [image …] lines; type a caption after the file name.</span></div>
     <div class="field"><span class="label" id="tone-l">Tone (used when there’s no cover image)</span><div class="tones" role="radiogroup" aria-labelledby="tone-l">
       ${TONES.map(t=>`<label title="${t}"><input type="radio" name="tone" id="tone-${t}" value="${t}" ${d.tone===t?"checked":""}><span style="background:var(--tone-${t})"></span></label>`).join("")}</div></div>
     <label class="check"><input type="checkbox" id="f-featured" ${d.featured?"checked":""}> Lead story on the front page</label>
@@ -457,13 +465,12 @@ function viewSettings(){
   const s = S.settings;
   return `<form class="form" id="settings-form" style="max-width:720px" novalidate>
     <div class="field"><label for="s-announcement">Announcement bar</label><input id="s-announcement" value="${esc(s.announcement)}" placeholder="Leave empty to hide the bar"><span class="hint">Shows across the top of every page. Good for a new issue, an event or a tour date.</span></div>
-    <div class="field"><label for="s-footer">Footer text</label><input id="s-footer" value="${esc(s.footer)}"></div>
     <div class="actions"><button class="btn" type="submit">Save settings</button><span class="status" id="status" role="status"></span></div>
   </form>`;
 }
 async function saveSettings(){
   const v = id => $(id).value.trim();
-  const data = {announcement:v("#s-announcement"), footer:v("#s-footer"), updated_at:new Date().toISOString()};
+  const data = {announcement:v("#s-announcement"), updated_at:new Date().toISOString()};
   setStatus("Saving…");
   const { error } = await sb.from("site_settings").update(data).eq("id",1);
   if (error) { setStatus(errText(error)); return; }
@@ -519,6 +526,44 @@ function refreshList(){
 let lastRoute = null;
 window.addEventListener("hashchange", onNav);
 
+/* ---- Light / dark mode (the choice is remembered in this browser) ---- */
+function setTheme(mode){
+  const root = document.documentElement, light = mode === "light";
+  if (light) root.setAttribute("data-theme", "light"); else root.removeAttribute("data-theme");
+  try { localStorage.setItem("r26-theme", light ? "light" : "dark"); } catch {}
+  document.querySelector('meta[name="theme-color"]')?.setAttribute("content", light ? "#F3F3F1" : "#070707");
+  syncThemeButton();
+}
+function syncThemeButton(){
+  const b = $("#theme-toggle"); if (!b) return;
+  const label = document.documentElement.getAttribute("data-theme") === "light" ? "Switch to dark mode" : "Switch to light mode";
+  b.setAttribute("aria-label", label); b.title = label;
+}
+syncThemeButton();
+{ const y = $("#year"); if (y) y.textContent = new Date().getFullYear(); }
+
+/* ---- Bold / italic in the post body ---- */
+function wrapSelection(mark){
+  const ta = $("#f-body"); if (!ta) return;
+  const s = ta.selectionStart, e = ta.selectionEnd, v = ta.value, n = mark.length;
+  const picked = v.slice(s, e);
+  if (s >= n && v.slice(s - n, s) === mark && v.slice(e, e + n) === mark) {          // already wrapped: unwrap
+    ta.value = v.slice(0, s - n) + picked + v.slice(e + n);
+    ta.setSelectionRange(s - n, e - n);
+  } else {
+    const text = picked || (mark === "**" ? "bold text" : "italic text");
+    ta.value = v.slice(0, s) + mark + text + mark + v.slice(e);
+    ta.setSelectionRange(s + n, s + n + text.length);
+  }
+  ta.focus();
+}
+document.addEventListener("keydown", e => {
+  if (e.target.id !== "f-body" || !(e.ctrlKey || e.metaKey) || e.altKey) return;
+  const k = e.key.toLowerCase();
+  if (k === "b") { e.preventDefault(); wrapSelection("**"); }
+  if (k === "i") { e.preventDefault(); wrapSelection("*"); }
+});
+
 let uploadTarget = null;
 async function mutate(promise){ const { error } = await promise; if (error) { alertStatus(errText(error)); return false; } await reload(); return true; }
 function alertStatus(msg){ const s=$("#status"); if (s) s.textContent=msg; else { const l=$("#list"); if(l) l.insertAdjacentHTML("afterbegin",`<p class="err" style="margin-bottom:12px">${esc(msg)}</p>`); } }
@@ -526,6 +571,8 @@ function alertStatus(msg){ const s=$("#status"); if (s) s.textContent=msg; else 
 document.addEventListener("click", async e => {
   const t = e.target.closest("button"); if (!t) return;
   const d = t.dataset;
+  if (t.id === "theme-toggle") { setTheme(document.documentElement.getAttribute("data-theme") === "light" ? "dark" : "light"); return; }
+  if (d.fmt) { wrapSelection(d.fmt); return; }
   if (d.share) {
     const p = S.posts.find(x => x.id === d.share); const url = location.origin + postUrl(d.share);
     if (navigator.share) { try { await navigator.share({ title: p?.title || "Room 26", url }); } catch {} return; }
