@@ -19,7 +19,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Urbanist:ital,wght@0,300..700;1,300..700&family=Source+Serif+4:ital,opsz,wght@0,8..60,300..600;1,8..60,300..600&display=swap">
-<link rel="stylesheet" href="/styles.css?v=12">
+<link rel="stylesheet" href="/styles.css?v=13">
 <style>
   html{background:var(--paper)}
   body{margin:0;min-height:100vh}
@@ -46,7 +46,7 @@
 </div>
 
 <header class="wrap mast">
-  <a href="/#home" aria-label="Room 26 home"><h1><img class="logo" src="/logo.png" alt="room 26" width="1008" height="285"></h1></a>
+  <a href="/#home" aria-label="Room 26 home"><h1><img class="logo logo-on-dark" src="/logo.png" alt="room 26" width="1008" height="285"><img class="logo logo-on-light" src="/logo-light.png" alt="room 26" width="944" height="241"></h1></a>
   <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Switch to light mode" title="Switch to light mode">
     <svg class="sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M5.3 18.7l1.6-1.6M17.1 6.9l1.6-1.6"/></svg>
     <svg class="moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 14.2A8.5 8.5 0 1 1 9.8 3.5a6.8 6.8 0 0 0 10.7 10.7z"/></svg>
@@ -60,7 +60,8 @@
 <footer>
   <div class="wrap foot">
     <div class="foot-brand">
-      <img class="logo sm" src="/logo.png" alt="room 26" width="1008" height="285">
+      <img class="logo sm logo-on-dark" src="/logo.png" alt="room 26" width="1008" height="285">
+      <img class="logo sm logo-on-light" src="/logo-light.png" alt="room 26" width="944" height="241">
       <p class="foot-lede">An independent voice in music and culture.</p>
       <p class="foot-bio">Room 26 is a platform for thoughtful criticism, emerging talent, and conversations that shape how we experience and understand art. Through editorial reviews, artist spotlights, cultural commentary, and open conversations, we explore the work, ideas, and people shaping the sound and direction of contemporary culture.</p>
     </div>
@@ -82,8 +83,8 @@
 
 <input type="file" id="file-in" accept="image/png,image/jpeg,image/webp,image/gif" hidden>
 
-<script src="/config.js?v=12"></script>
+<script src="/config.js?v=13"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
-<script src="/app.js?v=12"></script>
+<script src="/app.js?v=13"></script>
 </body>
 </html>

@@ -374,14 +374,10 @@ footer .wrap.foot nav{display:flex;gap:10px 20px;flex-wrap:wrap}
 .fmt-bar .b{font-weight:800} .fmt-bar .i{font-style:italic;font-weight:500}
 .fmt-bar .sep{width:1px;height:20px;background:var(--rule);margin-inline:4px}
 
-/* Light mode keeps the masthead and footer black: the chrome logo only reads on a dark stage */
-:root[data-theme="light"] .mast,
-:root[data-theme="light"] footer{
-  --paper:#070707; --paper-2:#121212; --ink:#ECECEC; --ink-2:#8E8E8E; --rule:#2A2A2A; --accent:#D8D8D8;
-  --chrome:linear-gradient(180deg,#FFFFFF 0%,#D9D9D9 30%,#7A7A7A 48%,#F2F2F2 60%,#A8A8A8 82%,#E6E6E6 100%);
-  --on-chrome:#0A0A0A; --chrome-edge:#BDBDBD;
-  background:var(--paper); color:var(--ink);
-}
-/* the masthead sits inside the page width; paint its band edge to edge */
-:root[data-theme="light"] .mast{box-shadow:0 0 0 100vmax var(--paper);clip-path:inset(0 -100vmax)}
-:root[data-theme="light"] footer{border-top-color:var(--paper)}
+/* Logo swap: chrome logo on dark, the flat black logo in light mode (header and footer) */
+.logo-on-light{display:none}
+:root[data-theme="light"] .logo-on-dark{display:none}
+:root[data-theme="light"] .logo-on-light{display:block}
+/* the chrome file carries room for its glow, the flat one doesn't: size them to match visually */
+.logo.logo-on-light{aspect-ratio:944/241;width:clamp(210px,45vw,545px);margin-inline:auto}
+.logo.sm.logo-on-light{width:192px;margin-inline:0}
